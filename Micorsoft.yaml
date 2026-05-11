@@ -1,31 +1,30 @@
-# NAME: Micorsoft
+# NAME: Micorsoft & Onedrive
 payload:
-  # 微软 2024 年后全面推行
-  - DOMAIN-SUFFIX,office.com,常用服务
-  - DOMAIN-SUFFIX,office365.com,常用服务
-  - DOMAIN-SUFFIX,microsoft365.com,常用服务
-  - DOMAIN-SUFFIX,cloud.microsoft,常用服务
-  - DOMAIN-SUFFIX,microsoft.com,常用服务
-  - DOMAIN-SUFFIX,msauth.net,常用服务
-  - DOMAIN-SUFFIX,msftauth.net,常用服务
+  - DOMAIN-SUFFIX,office.net
+  - DOMAIN-SUFFIX,office.com
+  - DOMAIN-SUFFIX,office365.com
+  - DOMAIN-SUFFIX,microsoft365.com
+  - DOMAIN-SUFFIX,cloud.microsoft
+  - DOMAIN-SUFFIX,static.microsoft
+  - DOMAIN-SUFFIX,microsoft.com
+  - DOMAIN-SUFFIX,msauth.net
+  - DOMAIN-SUFFIX,msftauth.net
 
-  # --- Copilot & AI 验证相关 (解决日志中 ms-sso.copilot.com 失败问题) ---
-  - DOMAIN-SUFFIX,copilot.com,常用服务
-  - DOMAIN-SUFFIX,bing.com,常用服务
+  - DOMAIN-SUFFIX,copilot.com
+  - DOMAIN-SUFFIX,bing.com
 
-  # --- OneDrive & SharePoint 存储相关 (合并自你提供的列表) ---
-  - DOMAIN-SUFFIX,1drv.com,常用服务
-  - DOMAIN-SUFFIX,onedrive.com,常用服务
-  - DOMAIN-SUFFIX,sharepoint.com,常用服务
-  - DOMAIN-SUFFIX,sharepointonline.com,常用服务
-  - DOMAIN-SUFFIX,livefilestore.com,常用服务
-  - DOMAIN-SUFFIX,microsoftpersonalcontent.com,常用服务
-  - DOMAIN-SUFFIX,oneclient.sfx.ms,常用服务
-  - DOMAIN-SUFFIX,skydrive.wns.windows.com,常用服务
-  - DOMAIN-SUFFIX,spoprod-a.akamaihd.net,常用服务
-  - DOMAIN-SUFFIX,live.com,常用服务
-  - DOMAIN-SUFFIX,msn.com,常用服务
+  - DOMAIN-SUFFIX,1drv.com
+  - DOMAIN-SUFFIX,onedrive.com
+  - DOMAIN-SUFFIX,sharepoint.com
+  - DOMAIN-SUFFIX,sharepointonline.com
+  - DOMAIN-SUFFIX,livefilestore.com
+  - DOMAIN-SUFFIX,microsoftpersonalcontent.com
+  - DOMAIN-SUFFIX,oneclient.sfx.ms
+  - DOMAIN-SUFFIX,skydrive.wns.windows.com
+  - DOMAIN-SUFFIX,spoprod-a.akamaihd.net
+  - DOMAIN-SUFFIX,live.com
+  - DOMAIN-SUFFIX,msn.com
 
   # --- 进程匹配 (保持不变) ---
-  - PROCESS-NAME,OneDrive,常用服务
-  - PROCESS-NAME,OneDriveUpdater,常用服务
+  - PROCESS-NAME,OneDrive
+  - PROCESS-NAME,OneDriveUpdater
