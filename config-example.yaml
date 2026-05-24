@@ -1,0 +1,75 @@
+# Clash Meta 配置示例
+rule-providers:
+  # ─── 域名规则集 ───
+  AdBlock:
+    type: http
+    format: mrs
+    behavior: domain
+    url: "https://fastly.jsdelivr.net/gh/BeliefDawn/Clash-RuleSet-Mod@main/rules/mrs/AdBlock.mrs"
+    path: ./rule_providers/adblock.mrs
+    interval: 86400
+
+  Custom:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/BeliefDawn/Clash-RuleSet-Mod@main/rules/mrs/Custom.mrs"
+    path: ./rule_providers/custom.mrs
+    interval: 86400
+
+  Common:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/BeliefDawn/Clash-RuleSet-Mod@main/rules/mrs/Common.mrs"
+    path: ./rule_providers/common.mrs
+    interval: 86400
+
+  Gemini:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/BeliefDawn/Clash-RuleSet-Mod@main/rules/mrs/Gemini.mrs"
+    path: ./rule_providers/gemini.mrs
+    interval: 86400
+
+  Microsoft:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/BeliefDawn/Clash-RuleSet-Mod@main/rules/mrs/Microsoft.mrs"
+    path: ./rule_providers/microsoft.mrs
+    interval: 86400
+
+  # ─── IP 规则集（全部合并，不用 no-resolve 自动触发 DNS） ───
+  Common-IP:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: "https://fastly.jsdelivr.net/gh/BeliefDawn/Clash-RuleSet-Mod@main/rules/mrs/Common-IP.mrs"
+    path: ./rule_providers/common_ip.mrs
+    interval: 86400
+
+  # 以下两组保留原来规则（格式为 classical 文本格式）
+  LanNoResolve:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Lan/Lan_No_Resolve.yaml
+    path: ./rule_providers/LanNoResolve.yaml
+  DNSNoResolve:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/DNS/DNS_No_Resolve.yaml
+    path: ./rule_providers/DNSNoResolve.yaml
+
+rules:
+  - RULE-SET,AdBlock,REJECT
+  - RULE-SET,Custom,常用服务
+  - RULE-SET,Common,常用服务
+  - RULE-SET,Common-IP,常用服务,no-resolve
+  - RULE-SET,Gemini,Gemini
+  - RULE-SET,Microsoft,微软服务
+  - MATCH,DIRECT
+  - MATCH,DIRECT
