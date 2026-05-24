@@ -1,3 +1,8 @@
+  - DOMAIN-REGEX,^(alt[1-8]-)?mtalk\.google\.com$,FCM推送
+  - DOMAIN,fcm.googleapis.com,FCM推送
+  - DOMAIN,fcm-xmpp.googleapis.com,FCM推送
+  - DOMAIN,android.apis.google.com,FCM推送
+  
   - IP-CIDR,210.140.139.129/32,no-resolve
   - IP-CIDR,104.18.10.118/32,no-resolve
   - IP-CIDR,91.108.4.0/22,Telegram,no-resolve
