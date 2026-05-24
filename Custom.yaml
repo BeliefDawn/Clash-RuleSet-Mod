@@ -1,4 +1,4 @@
-
+# NAME: Custom
 payload:
   - DOMAIN-REGEX,^(alt[1-8]-)?mtalk\.google\.com$
   - DOMAIN,fcm.googleapis.com
