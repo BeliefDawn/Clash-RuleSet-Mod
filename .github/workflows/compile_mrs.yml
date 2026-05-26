@@ -7,6 +7,10 @@ on:
       - 'rules/ip/**'
   workflow_dispatch: # 支持手动触发
 
+# 🌟 核心修复：提前声明强制所有生态 Action 使用最新的 Node.js 24 运行
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   compile:
     runs-on: ubuntu-latest
@@ -64,6 +68,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
           else
-            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集"
+            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集 (Node24)"
             git push
           fi
