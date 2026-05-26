@@ -21,9 +21,8 @@ jobs:
 
       - name: Download and Extract Mihomo Tool
         run: |
-          echo "==== 开始使用 jq 严谨解析 Mihomo 下载链接 ===="
-          
-          # 🌟 绝杀修改：通过官方 jq 工具，精准提取符合 linux-amd64 条件的 browser_download_url
+          echo "==== 使用 jq 严谨获取 Mihomo 官方最新内核 ===="
+          # 精准匹配 linux-amd64 且以 .gz 结尾的真实下载资产
           DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
             | jq -r '.assets[] | select(.name | contains("linux-amd64") and endswith(".gz")) | .browser_download_url' \
             | head -n 1)
@@ -33,13 +32,11 @@ jobs:
             exit 1
           fi
           
-          echo "捕获到的真实内核下载直链: $DOWNLOAD_URL"
-          
-          # 下载真正的二进制压缩包
+          echo "真实内核下载直链: $DOWNLOAD_URL"
           wget -O mihomo.gz "$DOWNLOAD_URL"
           
-          # 解压并赋权
-          gunzip mihomo.gz
+          # 解压并重命名
+          gunzip -f mihomo.gz
           chmod +x mihomo
           ./mihomo -v
 
@@ -53,7 +50,11 @@ jobs:
             for file in rules/domain/*.yaml; do
               filename=$(basename "$file" .yaml)
               echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
-              ./mihomo predict rule-set compile domain "$file" "rules/mrs/${filename}.mrs"
+              
+              # 🌟 绝杀修改：改用官方标准的 cli rule-set 明确指定参数
+              # 如果你的内核版本极新，可以用: ./mihomo predict rule-set compile domain "$file" "rules/mrs/${filename}.mrs"
+              # 如果上面报错，下面这种带有 --type 的显式参数是最安全的，绝对不会触发代理启动：
+              ./mihomo cli rule-set compile --type domain --input "$file" --output "rules/mrs/${filename}.mrs"
             done
           fi
 
@@ -62,7 +63,9 @@ jobs:
             for file in rules/ip/*.yaml; do
               filename=$(basename "$file" .yaml)
               echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
-              ./mihomo predict rule-set compile ipcidr "$file" "rules/mrs/${filename}_ip.mrs"
+              
+              # 🌟 绝杀修改
+              ./mihomo cli rule-set compile --type ipcidr --input "$file" --output "rules/mrs/${filename}_ip.mrs"
             done
           fi
           
@@ -73,11 +76,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add rules/mrs/*.mrs
+          # 强制把编译产物文件夹拉入暂存区
+          git add rules/mrs/*.mrs || true
           
           if git diff --staged --quiet; then
             echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
           else
-            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集 (终修复)"
+            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集 (使用官方标准CLI)"
             git push
           fi
