@@ -7,7 +7,6 @@ on:
       - 'rules/ip/**'
   workflow_dispatch: # 支持手动触发
 
-# 🌟 核心修复：提前声明强制所有生态 Action 使用最新的 Node.js 24 运行
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
@@ -18,56 +17,75 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # 获取最近两次提交以对比变化
+          fetch-depth: 2
 
       - name: Download Mihomo Tool
         run: |
-          wget https://github.com/MetaCubeX/mihomo/releases/download/v1.18.3/mihomo-linux-amd64-v1.18.3.tar.gz
-          tar -zxf mihomo-linux-amd64-v1.18.3.tar.gz
-          mv mihomo-linux-amd64 mihomo
+          echo "==== 开始动态获取 Mihomo 正确的下载链接 ===="
+          # 自动从官方 GitHub API 获取最新的 Release 版本号和对应的 compatible 版本的下载 URL
+          # 这样可以 100% 避免由于官方改名导致的 404 错误
+          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/tags/v1.18.3 | grep "browser_download_url" | grep "linux-amd64-compatible" | grep "tar.gz" | head -n 1 | cut -d '"' -f 4)
+          
+          if [ -z "$DOWNLOAD_URL" ]; then
+            echo "⚠️ 无法通过 API 匹配到特定版本，尝试使用通用最新版方案..."
+            DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep "browser_download_url" | grep "linux-amd64-compatible" | grep "tar.gz" | head -n 1 | cut -d '"' -f 4)
+          fi
+          
+          echo "最终确定的可靠下载链接: $DOWNLOAD_URL"
+          wget -O mihomo.tar.gz "$DOWNLOAD_URL"
+          
+          # 解压并重命名提取出二进制执行文件
+          tar -zxf mihomo.tar.gz
+          # 官方解压后名字通常叫 clash-meta 或 mihomo，这里用模糊匹配移动它
+          mv mihomo-linux-amd64* mihomo 2>/dev/null || mv clash-meta* mihomo 2>/dev/null || true
           chmod +x mihomo
+          echo "==== Mihomo 工具准备就绪 ===="
 
       - name: Process and Compile Rules
         run: |
-          # 创建输出目录（防万一）
           mkdir -p rules/mrs
-          
           echo "==== 开始扫描并编译规则 ===="
           
-          # 1. 处理域名文件夹 (rules/domain/*.yaml)
-          if [ -d "rules/domain" ]; then
+          # 1. 安全处理域名文件夹
+          if [ -d "rules/domain" ] && [ "$(ls -A rules/domain/*.yaml 2>/dev/null)" ]; then
             for file in rules/domain/*.yaml; do
-              [ -e "$file" ] || continue
               filename=$(basename "$file" .yaml)
-              echo "发现域名规则: $file -> 编译为 rules/mrs/${filename}.mrs"
-              ./mihomo rule-set compile --type domain "$file" "rules/mrs/${filename}.mrs"
+              echo "正在编译域名规则: $file"
+              if ! ./mihomo rule-set compile --type domain "$file" "rules/mrs/${filename}.mrs"; then
+                echo "❌ 错误: 编译 $file 失败！"
+                exit 8
+              fi
             done
+          else
+            echo "ℹ️ 提示: rules/domain 文件夹为空，跳过。"
           fi
 
-          # 2. 处理 IP 文件夹 (rules/ip/*.yaml)
-          # 会自动将 behavior 设置为 ipcidr，并为文件名追加 _ip 后缀
-          if [ -d "rules/ip" ]; then
+          # 2. 安全处理 IP 文件夹
+          if [ -d "rules/ip" ] && [ "$(ls -A rules/ip/*.yaml 2>/dev/null)" ]; then
             for file in rules/ip/*.yaml; do
-              [ -e "$file" ] || continue
               filename=$(basename "$file" .yaml)
-              echo "发现 IP 规则: $file -> 编译为 rules/mrs/${filename}_ip.mrs"
-              ./mihomo rule-set compile --type ipcidr "$file" "rules/mrs/${filename}_ip.mrs"
+              echo "正在编译 IP 规则: $file"
+              if ! ./mihomo rule-set compile --type ipcidr "$file" "rules/mrs/${filename}_ip.mrs"; then
+                echo "❌ 错误: 编译 $file 失败！"
+                exit 8
+              fi
             done
+          else
+            echo "ℹ️ 提示: rules/ip 文件夹为空，跳过。"
           fi
           
-          echo "==== 编译流程结束 ===="
+          echo "==== 编译流程顺利结束 ===="
 
       - name: Commit and Push to Repository
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add rules/mrs/*.mrs
+          git add rules/mrs/*.mrs 2>/dev/null || true
           
-          # 检查是否有文件变动，防止空提交报错
           if git diff --staged --quiet; then
             echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
           else
-            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集 (Node24)"
+            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集"
             git push
           fi
