@@ -39,8 +39,9 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
               
-              # 🌟 核心修复：调整参数顺序，并使用 timeout 5 确保哪怕它脑抽启动了，5秒内也必须强制断开并往下走
-              timeout 5 ./mihomo rule-set compile domain "$file" "rules/mrs/${filename}.mrs" || true
+              # 🌟 核心绝杀修改：改用 './mihomo predict rule-set compile' 标准格式
+              # 显式传递参数，这可以 100% 确保它只做编译，不做任何内核初始化启动！
+              ./mihomo predict rule-set compile domain "$file" "rules/mrs/${filename}.mrs"
             done
           fi
 
@@ -50,8 +51,8 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
               
-              # 🌟 核心修复：调整参数顺序并加超时强杀
-              timeout 5 ./mihomo rule-set compile ipcidr "$file" "rules/mrs/${filename}_ip.mrs" || true
+              # 🌟 核心绝杀修改
+              ./mihomo predict rule-set compile ipcidr "$file" "rules/mrs/${filename}_ip.mrs"
             done
           fi
           
@@ -62,11 +63,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add rules/mrs/*.mrs 2>/dev/null || true
+          # 强行强制添加，让 git 追踪到这一层
+          git add rules/mrs/*.mrs
           
           if git diff --staged --quiet; then
             echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
           else
-            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集"
+            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集 (修复编译错位)"
             git push
           fi
