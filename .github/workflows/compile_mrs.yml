@@ -19,38 +19,38 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Download Mihomo Tool
+      - name: Download and Extract Mihomo Tool
         run: |
-          echo "==== 开始动态获取 Mihomo 正确的下载链接 ===="
-          # 自动从官方 GitHub API 获取最新的 Release 版本号和对应的 compatible 版本的下载 URL
-          # 这样可以 100% 避免由于官方改名导致的 404 错误
-          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/tags/v1.18.3 | grep "browser_download_url" | grep "linux-amd64-compatible" | grep "tar.gz" | head -n 1 | cut -d '"' -f 4)
+          echo "==== 开始动态获取 Mihomo 正确的 .gz 下载链接 ===="
           
-          if [ -z "$DOWNLOAD_URL" ]; then
-            echo "⚠️ 无法通过 API 匹配到特定版本，尝试使用通用最新版方案..."
-            DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep "browser_download_url" | grep "linux-amd64-compatible" | grep "tar.gz" | head -n 1 | cut -d '"' -f 4)
-          fi
+          # 从官方 API 获取最新版本的真实下载直链 (精准匹配 linux-amd64-v 开头且以 .gz 结尾的文件)
+          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep "browser_download_url" | grep "linux-amd64-v" | grep "\.gz" | head -n 1 | cut -d '"' -f 4)
           
-          echo "最终确定的可靠下载链接: $DOWNLOAD_URL"
-          wget -O mihomo.tar.gz "$DOWNLOAD_URL"
+          echo "捕获到的真实下载链接: $DOWNLOAD_URL"
           
-          # 解压并重命名提取出二进制执行文件
-          tar -zxf mihomo.tar.gz
-          # 官方解压后名字通常叫 clash-meta 或 mihomo，这里用模糊匹配移动它
-          mv mihomo-linux-amd64* mihomo 2>/dev/null || mv clash-meta* mihomo 2>/dev/null || true
+          # 下载并保存为 mihomo.gz
+          wget -O mihomo.gz "$DOWNLOAD_URL"
+          
+          # 🌟 核心修复：官方是 .gz 单文件压缩，使用 gunzip 解压
+          gunzip mihomo.gz
+          
+          # 给解压出来的二进制文件赋予执行权限
           chmod +x mihomo
-          echo "==== Mihomo 工具准备就绪 ===="
+          
+          # 验证工具是否能正常运行
+          ./mihomo -v
+          echo "==== Mihomo 编译工具安全就绪 ===="
 
       - name: Process and Compile Rules
         run: |
           mkdir -p rules/mrs
           echo "==== 开始扫描并编译规则 ===="
           
-          # 1. 安全处理域名文件夹
+          # 1. 处理域名文件夹
           if [ -d "rules/domain" ] && [ "$(ls -A rules/domain/*.yaml 2>/dev/null)" ]; then
             for file in rules/domain/*.yaml; do
               filename=$(basename "$file" .yaml)
-              echo "正在编译域名规则: $file"
+              echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
               if ! ./mihomo rule-set compile --type domain "$file" "rules/mrs/${filename}.mrs"; then
                 echo "❌ 错误: 编译 $file 失败！"
                 exit 8
@@ -60,11 +60,11 @@ jobs:
             echo "ℹ️ 提示: rules/domain 文件夹为空，跳过。"
           fi
 
-          # 2. 安全处理 IP 文件夹
+          # 2. 处理 IP 文件夹
           if [ -d "rules/ip" ] && [ "$(ls -A rules/ip/*.yaml 2>/dev/null)" ]; then
             for file in rules/ip/*.yaml; do
               filename=$(basename "$file" .yaml)
-              echo "正在编译 IP 规则: $file"
+              echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
               if ! ./mihomo rule-set compile --type ipcidr "$file" "rules/mrs/${filename}_ip.mrs"; then
                 echo "❌ 错误: 编译 $file 失败！"
                 exit 8
@@ -81,6 +81,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
+          # 尝试添加生成的 mrs 文件
           git add rules/mrs/*.mrs 2>/dev/null || true
           
           if git diff --staged --quiet; then
