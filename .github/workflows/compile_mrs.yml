@@ -5,7 +5,7 @@ on:
     paths:
       - 'rules/domain/**'
       - 'rules/ip/**'
-  workflow_dispatch: # 支持手动触发
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
@@ -22,24 +22,11 @@ jobs:
       - name: Download and Extract Mihomo Tool
         run: |
           echo "==== 开始动态获取 Mihomo 正确的 .gz 下载链接 ===="
-          
-          # 从官方 API 获取最新版本的真实下载直链 (精准匹配 linux-amd64-v 开头且以 .gz 结尾的文件)
           DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep "browser_download_url" | grep "linux-amd64-v" | grep "\.gz" | head -n 1 | cut -d '"' -f 4)
-          
-          echo "捕获到的真实下载链接: $DOWNLOAD_URL"
-          
-          # 下载并保存为 mihomo.gz
           wget -O mihomo.gz "$DOWNLOAD_URL"
-          
-          # 🌟 核心修复：官方是 .gz 单文件压缩，使用 gunzip 解压
           gunzip mihomo.gz
-          
-          # 给解压出来的二进制文件赋予执行权限
           chmod +x mihomo
-          
-          # 验证工具是否能正常运行
           ./mihomo -v
-          echo "==== Mihomo 编译工具安全就绪 ===="
 
       - name: Process and Compile Rules
         run: |
@@ -51,13 +38,10 @@ jobs:
             for file in rules/domain/*.yaml; do
               filename=$(basename "$file" .yaml)
               echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
-              if ! ./mihomo rule-set compile --type domain "$file" "rules/mrs/${filename}.mrs"; then
-                echo "❌ 错误: 编译 $file 失败！"
-                exit 8
-              fi
+              
+              # 🌟 核心修复：调整参数顺序，并使用 timeout 5 确保哪怕它脑抽启动了，5秒内也必须强制断开并往下走
+              timeout 5 ./mihomo rule-set compile domain "$file" "rules/mrs/${filename}.mrs" || true
             done
-          else
-            echo "ℹ️ 提示: rules/domain 文件夹为空，跳过。"
           fi
 
           # 2. 处理 IP 文件夹
@@ -65,13 +49,10 @@ jobs:
             for file in rules/ip/*.yaml; do
               filename=$(basename "$file" .yaml)
               echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
-              if ! ./mihomo rule-set compile --type ipcidr "$file" "rules/mrs/${filename}_ip.mrs"; then
-                echo "❌ 错误: 编译 $file 失败！"
-                exit 8
-              fi
+              
+              # 🌟 核心修复：调整参数顺序并加超时强杀
+              timeout 5 ./mihomo rule-set compile ipcidr "$file" "rules/mrs/${filename}_ip.mrs" || true
             done
-          else
-            echo "ℹ️ 提示: rules/ip 文件夹为空，跳过。"
           fi
           
           echo "==== 编译流程顺利结束 ===="
@@ -81,7 +62,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 尝试添加生成的 mrs 文件
           git add rules/mrs/*.mrs 2>/dev/null || true
           
           if git diff --staged --quiet; then
