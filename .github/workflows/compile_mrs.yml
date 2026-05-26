@@ -1,58 +1,9 @@
-name: Auto Compile Meta MRS
-
-on:
-  push:
-    paths:
-      - 'rules/domain/**'
-      - 'rules/ip/**'
-  workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
-
-jobs:
-  compile:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # 🌟 赋予 Bot 写入仓库的最高权限
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Download and Extract Mihomo Tool
-        run: |
-          echo "==== 使用 jq 获取 Mihomo 官方最新内核 ===="
-          DOWNLOAD_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
-            | jq -r '.assets[] | select(.name | contains("linux-amd64") and (endswith(".gz") or endswith(".tgz"))) | .browser_download_url' \
-            | head -n 1)
-          
-          if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
-            echo "❌ 错误：未能获取到有效的下载直链！"
-            exit 1
-          fi
-          
-          echo "正在下载内核自: $DOWNLOAD_URL"
-          wget -O mihomo.gz "$DOWNLOAD_URL"
-          
-          if [[ "$DOWNLOAD_URL" == *.tar.gz ]]; then
-            tar -xzf mihomo.gz
-          else
-            gunzip -f -S .gz mihomo.gz || gunzip -f mihomo.gz
-          fi
-          
-          find . -maxdepth 1 -name "mihomo-linux-amd64*" -exec mv {} mihomo \; 2>/dev/null || true
-          chmod +x mihomo
-          ./mihomo -v
-
-      - name: Process and Compile Rules
+- name: Process and Compile Rules
         run: |
           mkdir -p rules/mrs
           echo "==== 开始扫描并编译规则 ===="
           
-          # 🌟 绝对路径绑定：确保存储与读取路径完全一致
+          # 绝对路径绑定：确保存储与读取路径完全一致
           CONFIG_PATH="$(pwd)/dummy_config.yaml"
           
           # 强行将所有监听端口设为 0，彻底封印本地网络引擎
@@ -78,8 +29,8 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
               
-              # 🌟 终极微调：把输入文件 "$file" 也强行绑定为绝对路径 "$(pwd)/$file"
-              ./mihomo -c "$CONFIG_PATH" rule-set compile domain "$(pwd)/$file" "$(pwd)/rules/mrs/${filename}.mrs"
+              # 🌟 修复：将 -c 改为 Mihomo 专属的 -f 参数
+              ./mihomo -f "$CONFIG_PATH" rule-set compile domain "$(pwd)/$file" "$(pwd)/rules/mrs/${filename}.mrs"
             done
           fi
 
@@ -89,23 +40,9 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
               
-              # 🌟 终极微调：输入文件套上绝对路径
-              ./mihomo -c "$CONFIG_PATH" rule-set compile ipcidr "$(pwd)/$file" "$(pwd)/rules/mrs/${filename}_ip.mrs"
+              # 🌟 修复：将 -c 改为 Mihomo 专属的 -f 参数
+              ./mihomo -f "$CONFIG_PATH" rule-set compile ipcidr "$(pwd)/$file" "$(pwd)/rules/mrs/${filename}_ip.mrs"
             done
           fi
           
           echo "==== 编译流程顺利结束 ===="
-
-      - name: Commit and Push to Repository
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add rules/mrs/
-          
-          if git diff --staged --quiet; then
-            echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
-          else
-            git commit -m "action: 极速编译最新 MRS 二进制库"
-            git push origin HEAD:${{ github.ref_name }}
-          fi
