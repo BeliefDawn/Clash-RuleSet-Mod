@@ -52,8 +52,11 @@ jobs:
           mkdir -p rules/mrs
           echo "==== 开始扫描并编译规则 ===="
           
-          # 🌟 强行将所有监听端口设为 0，彻底封印本地网络引擎，实现离线闪电编译
-          cat << 'EOF' > dummy_config.yaml
+          # 🌟 绝对路径绑定：确保存储与读取路径完全一致
+          CONFIG_PATH="$(pwd)/dummy_config.yaml"
+          
+          # 强行将所有监听端口设为 0，彻底封印本地网络引擎
+          cat << 'EOF' > "$CONFIG_PATH"
           mode: rule
           log-level: warning
           allow-lan: false
@@ -75,8 +78,8 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
               
-              # 🌟 正确的命令结构：全局参数 -c 紧跟在主命令后面
-              ./mihomo -c dummy_config.yaml rule-set compile domain "$file" "rules/mrs/${filename}.mrs"
+              # 🌟 终极微调：把输入文件 "$file" 也强行绑定为绝对路径 "$(pwd)/$file"
+              ./mihomo -c "$CONFIG_PATH" rule-set compile domain "$(pwd)/$file" "$(pwd)/rules/mrs/${filename}.mrs"
             done
           fi
 
@@ -86,7 +89,8 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
               
-              ./mihomo -c dummy_config.yaml rule-set compile ipcidr "$file" "rules/mrs/${filename}_ip.mrs"
+              # 🌟 终极微调：输入文件套上绝对路径
+              ./mihomo -c "$CONFIG_PATH" rule-set compile ipcidr "$(pwd)/$file" "$(pwd)/rules/mrs/${filename}_ip.mrs"
             done
           fi
           
@@ -102,6 +106,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
           else
-            git commit -m "action: 编译最新的二进制 MRS 规则集"
+            git commit -m "action: 极速编译最新 MRS 二进制库"
             git push origin HEAD:${{ github.ref_name }}
           fi
