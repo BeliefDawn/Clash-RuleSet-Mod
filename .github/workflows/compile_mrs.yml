@@ -13,6 +13,10 @@ env:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    # 🌟 核心修复：显式赋予此任务对仓库的写入权限，彻底解决 push 报错
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -21,10 +25,10 @@ jobs:
 
       - name: Download and Extract Mihomo Tool
         run: |
-          echo "==== 使用 jq 严谨获取 Mihomo 官方最新内核 ===="
-          # 精准匹配 linux-amd64 且以 .gz 结尾的真实下载资产
-          DOWNLOAD_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
-            | jq -r '.assets[] | select(.name | contains("linux-amd64") and endswith(".gz")) | .browser_download_url' \
+          echo "==== 使用 jq 获取 Mihomo 官方最新内核 ===="
+          # 加上 -H 认证，确保 Actions 内部请求 API 绝对不会被限流
+          DOWNLOAD_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
+            | jq -r '.assets[] | select(.name | contains("linux-amd64") and (endswith(".gz") or endswith(".tgz"))) | .browser_download_url' \
             | head -n 1)
           
           if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
@@ -32,11 +36,18 @@ jobs:
             exit 1
           fi
           
-          echo "真实内核下载直链: $DOWNLOAD_URL"
+          echo "正在下载内核自: $DOWNLOAD_URL"
           wget -O mihomo.gz "$DOWNLOAD_URL"
           
-          # 解压并重命名
-          gunzip -f mihomo.gz
+          # 健壮性适配：智能处理 .gz 和 .tar.gz
+          if [[ "$DOWNLOAD_URL" == *.tar.gz ]]; then
+            tar -xzf mihomo.gz
+          else
+            gunzip -f -S .gz mihomo.gz || gunzip -f mihomo.gz
+          fi
+          
+          # 确保文件名统一为 mihomo 并赋予执行权限
+          find . -maxdepth 1 -name "mihomo-linux-amd64*" -exec mv {} mihomo \; 2>/dev/null || true
           chmod +x mihomo
           ./mihomo -v
 
@@ -45,16 +56,17 @@ jobs:
           mkdir -p rules/mrs
           echo "==== 开始扫描并编译规则 ===="
           
+          # 创建工作目录和空配置，彻底封印内核的 7890 网页端口启动欲望
+          touch dummy_config.yaml
+          
           # 1. 处理域名文件夹
           if [ -d "rules/domain" ] && [ "$(ls -A rules/domain/*.yaml 2>/dev/null)" ]; then
             for file in rules/domain/*.yaml; do
               filename=$(basename "$file" .yaml)
               echo "正在编译域名规则: $file -> rules/mrs/${filename}.mrs"
               
-              # 🌟 绝杀修改：改用官方标准的 cli rule-set 明确指定参数
-              # 如果你的内核版本极新，可以用: ./mihomo predict rule-set compile domain "$file" "rules/mrs/${filename}.mrs"
-              # 如果上面报错，下面这种带有 --type 的显式参数是最安全的，绝对不会触发代理启动：
-              ./mihomo cli rule-set compile --type domain --input "$file" --output "rules/mrs/${filename}.mrs"
+              # 🌟 核心修复：把全局参数 -c dummy_config.yaml 提到核心命令 mihomo 后面，然后再接子命令
+              ./mihomo -c dummy_config.yaml rule-set compile domain "$file" "rules/mrs/${filename}.mrs"
             done
           fi
 
@@ -64,8 +76,8 @@ jobs:
               filename=$(basename "$file" .yaml)
               echo "正在编译 IP 规则: $file -> rules/mrs/${filename}_ip.mrs"
               
-              # 🌟 绝杀修改
-              ./mihomo cli rule-set compile --type ipcidr --input "$file" --output "rules/mrs/${filename}_ip.mrs"
+              # 🌟 核心修复：同上，修正参数架构顺序
+              ./mihomo -c dummy_config.yaml rule-set compile ipcidr "$file" "rules/mrs/${filename}_ip.mrs"
             done
           fi
           
@@ -76,12 +88,13 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 强制把编译产物文件夹拉入暂存区
-          git add rules/mrs/*.mrs || true
+          # 把生成的二进制 mrs 文件夹添加进暂存区
+          git add rules/mrs/
           
           if git diff --staged --quiet; then
             echo "没有检测到生成的 .mrs 文件有任何变动，跳过推送。"
           else
-            git commit -m "action: 自动编译最新的 Domain & IP 二进制规则集 (使用官方标准CLI)"
-            git push
+            git commit -m "action: 编译最新的二进制 MRS 规则集"
+            # 🌟 核心修复：推流时带上内置权限，确保顺畅写入云端
+            git push origin HEAD:${{ github.ref_name }}
           fi
