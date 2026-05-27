@@ -1,14 +1,13 @@
 # NAME: Custom
 payload:
-  - resilio.com
-  - greasyfork.org
-  - reddit.com
-  - kemono.cr
-  - nhentai.net
-  - e-hentai.org
-  - ehgt.org
-  - v2ex.com
-  - linux.do
-  - addons.mozilla.org
-  - saucenao.com
-  - jingjiniao.info
+  - .resilio.com
+  - .greasyfork.org
+  - .kemono.cr
+  - .nhentai.net
+  - .e-hentai.org
+  - .ehgt.org
+  - .v2ex.com
+  - .linux.do
+  - .mozilla.org
+  - .saucenao.com
+  - .jingjiniao.info
