@@ -4,8 +4,6 @@ payload:
   - '+.greasyfork.org'
   - '+.kemono.cr'
   - '+.nhentai.net'
-  - '+.e-hentai.org'
-  - '+.ehgt.org'
   - '+.v2ex.com'
   - '+.linux.do'
   - '+.mozilla.org'      # 优化：直接代理整个 mozilla 域名，包含 addons 及其它子服务
