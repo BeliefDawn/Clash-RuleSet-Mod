@@ -1,4 +1,7 @@
-DOMAIN-SUFFIX,e-hentai.org
-DOMAIN-SUFFIX,ehgt.org
-DOMAIN-SUFFIX,ehwiki.org
-DOMAIN-SUFFIX,exhentai.org
+# NAME: Ads-Domain
+# Clean ad blocking rule set for Clash Meta (behavior: domain)
+payload:
+  - DOMAIN-SUFFIX,e-hentai.org
+  - DOMAIN-SUFFIX,ehgt.org
+  - DOMAIN-SUFFIX,ehwiki.org
+  - DOMAIN-SUFFIX,exhentai.org
