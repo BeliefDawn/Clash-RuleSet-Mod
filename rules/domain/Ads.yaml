@@ -37,5 +37,5 @@ payload:
   - telecome.cn
   - puata.info
   
-  - '+.bing.com'
-  - +.baidu.com
+  - +.bing.com
+  - baidu.com
