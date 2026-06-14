@@ -1,5 +1,4 @@
-# NAME: Ads-Domain
-# Clean ad blocking rule set for Clash Meta (behavior: domain)
+# NAME: E-henati
 payload:
   - DOMAIN-SUFFIX,e-hentai.org
   - DOMAIN-SUFFIX,ehgt.org
