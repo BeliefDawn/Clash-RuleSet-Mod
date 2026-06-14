@@ -1,6 +1,6 @@
 # NAME: E-henati
 payload:
-  - DOMAIN-SUFFIX,e-hentai.org
-  - DOMAIN-SUFFIX,ehgt.org
-  - DOMAIN-SUFFIX,ehwiki.org
-  - DOMAIN-SUFFIX,exhentai.org
+  - e-hentai.org
+  - ehgt.org
+  - ehwiki.org
+  - exhentai.org
