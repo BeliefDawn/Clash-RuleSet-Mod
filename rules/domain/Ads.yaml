@@ -1,12 +1,12 @@
 # NAME: Ads-Domain
 # Clean ad blocking rule set for Clash Meta (behavior: domain)
 payload:
-  - # --- 微信相关广告与追踪 ---
+  # --- 微信相关广告与追踪 ---
   - - mmbiz.qpic.cn
   - timg.qlogo.cn
   - ad.weixin.qq.com
 
-  - # --- 字节跳动/穿山甲广告 SDK ---
+  # --- 字节跳动/穿山甲广告 SDK ---
   - pglstatp-toutiao.com
   - pangolin-sdk-toutiao.com
   - pangolin-sdk-toutiao1.com
@@ -16,7 +16,7 @@ payload:
   - log-api.pangolin-sdk-toutiao.com
   - log-api.pangolin-sdk-toutiao-b.com
 
-  - # --- 腾讯/广点通广告 SDK ---
+  # --- 腾讯/广点通广告 SDK ---
   - gdt.qq.com
   - gdtimg.com
   - pgdt.ugdtimg.com
@@ -24,18 +24,18 @@ payload:
   - tdid.m.qq.com
   - pp.myapp.com
 
-  - # --- 快手广告 SDK ---
+  # --- 快手广告 SDK ---
   - adkwai.com
   - adukwai.com
   - kskwai.com
 
-  - # --- 其他海外/劫持类广告与追踪 ---
+  # --- 其他海外/劫持类广告与追踪 ---
   - bluetrafficstream.com
   - tsyndicate.com
   - statisticslinks.com
   - ctobsnssdk.com
   - telecome.cn
   - puata.info
-  - 
+  
   - '+.bing.com'
   - +.baidu.com
