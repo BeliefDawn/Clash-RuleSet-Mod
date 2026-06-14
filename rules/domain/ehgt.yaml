@@ -1,6 +1,6 @@
 # NAME: E-henati
 payload:
-  - e-hentai.org
-  - ehgt.org
-  - ehwiki.org
-  - exhentai.org
+  - '+.e-hentai.org'
+  - '+.ehgt.org'
+  - '+.ehwiki.org'
+  - '+.exhentai.org'
