@@ -2,7 +2,7 @@
 # Clean ad blocking rule set for Clash Meta (behavior: domain)
 payload:
   # --- 微信相关广告与追踪 ---
-  - - mmbiz.qpic.cn
+  - mmbiz.qpic.cn
   - timg.qlogo.cn
   - ad.weixin.qq.com
 
