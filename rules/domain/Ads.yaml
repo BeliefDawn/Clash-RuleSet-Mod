@@ -1,11 +1,6 @@
 # NAME: Ads-Domain
 # Clean ad blocking rule set for Clash Meta (behavior: domain)
 payload:
-  # --- 微信相关广告与追踪 ---
-  - mmbiz.qpic.cn
-  - timg.qlogo.cn
-  - ad.weixin.qq.com
-
   # --- 字节跳动/穿山甲广告 SDK ---
   - pglstatp-toutiao.com
   - pangolin-sdk-toutiao.com
@@ -15,27 +10,43 @@ payload:
   - gromore.pangolin-sdk-toutiao.com
   - log-api.pangolin-sdk-toutiao.com
   - log-api.pangolin-sdk-toutiao-b.com
+  - sf3-fe-tos.pglstatp-toutiao.com
 
-  # --- 腾讯/广点通广告 SDK ---
+  # --- 腾讯广点通/优量汇广告 ---
   - gdt.qq.com
   - gdtimg.com
   - pgdt.ugdtimg.com
   - sdk.e.qq.com
-  - tdid.m.qq.com
-  - pp.myapp.com
+  - win.gdt.qq.com
+  - mi.gdt.qq.com
+  - qzs.gdtimg.com
+
+  # --- AnyThink (TopOn 聚合广告联盟) ---
+  - anythinktech.com
+  - cn-api.anythinktech.com
+  - cn-tk.anythinktech.com
+  - cn-da.anythinktech.com
+  - datk.anythinktech.com
+  - fu-stre.anythinktech.com
+  - mores.anythinktech.com
+  - adx-bj.anythinktech.com
 
   # --- 快手广告 SDK ---
   - adkwai.com
   - adukwai.com
   - kskwai.com
 
+  # --- 营销追踪与广告数据分析 ---
+  - statisticslinks.com
+  - metricslinks.com
+  - dsp-api-cn.metricslinks.com
+  - tk.statisticslinks.com
+  - adx-strategy-api-cn.statisticslinks.com
+  - da.statisticslinks.com
+
   # --- 其他海外/劫持类广告与追踪 ---
   - bluetrafficstream.com
   - tsyndicate.com
-  - statisticslinks.com
   - ctobsnssdk.com
   - telecome.cn
   - puata.info
-  
-  - +.bing.com
-  - baidu.com
