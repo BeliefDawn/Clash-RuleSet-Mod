@@ -1,0 +1,58 @@
+# NAME: Dev-Tools
+payload:
+  # Flutter / Dart
+  - +.flutter.dev
+  - +.pub.dev
+  - +.dart.dev
+
+  # Go 语言
+  - +.golang.org
+  - +.go.dev
+
+  # GCP 开发平台
+  - +.appspot.com
+  - +.cloudfunctions.net
+  - +.gcr.io
+  - +.web.app
+  - +.run.app
+  - +.googleapis.dev
+  - +.googlecloud.com
+  - +.googlecloudplatform.com
+
+  # 开发者资源
+  - +.developers.google.com
+  - +.googlesource.com
+
+  # Rust（Tauri）
+  - +.rust-lang.org
+  - +.crates.io
+  - +.docs.rs
+
+  # npm / Node.js
+  - +.npmjs.org
+  - +.nodejs.org
+  - +.registry.npmjs.org
+
+  # Docker
+  - +.docker.com
+  - +.docker.io
+
+  # Python
+  - +.pypi.org
+  - +.python.org
+  - +.pythonhosted.org
+
+  # JVM / Gradle / Maven
+  - +.maven.org
+  - +.gradle.org
+  - +.adoptium.net
+
+  # ML / AI
+  - +.huggingface.co
+  - +.tensorflow.org
+  - +.kaggle.com
+  - +.colab.research.google.com
+
+  # 开发者社区
+  - +.stackoverflow.com
+  - +.gitlab.com

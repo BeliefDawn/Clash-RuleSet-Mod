@@ -17,11 +17,6 @@ payload:
   - +.firebaseremoteconfig.googleapis.com
   - +.crashlytics.com
 
-  # Flutter/Dart 开发
-  - +.flutter.dev
-  - +.pub.dev
-  - +.dart.dev
-
   # Play 商店
   - +.play.google.com
   - +.play.googleapis.com
@@ -71,17 +66,6 @@ payload:
   - +.google.co.id
   - +.google.co.in
 
-  # 开发/云服务
-  - +.appspot.com
-  - +.cloudfunctions.net
-  - +.gcr.io
-  - +.web.app
-  - +.run.app
-  - +.golang.org
-  - +.go.dev
+  # 验证与链接
   - +.recaptcha.net
   - +.page.link
-
-  # 开发者资源
-  - +.developers.google.com
-  - +.googlesource.com
