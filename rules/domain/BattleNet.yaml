@@ -1,0 +1,21 @@
+# NAME: BattleNet
+# NetEase Battle.net / StarCraft II (using modified NetEase client)
+payload:
+  # Blizzard / Battle.net 核心
+  - +.battle.net
+  - +.blizzard.com
+
+  # 国服战网域名（.com.cn）
+  - +.battlenet.com.cn
+  - +.blizzard.com.cn
+
+  # StarCraft II 国服 CDN（网易雷火）
+  - +.leihuo.netease.com
+
+  # 网易战网 CDN
+  - +.blz.nosdn.127.net
+
+  # Blizzard CDN（Akamai）
+  - +.blzddist1-a.akamaihd.net
+  - +.blzddist2-a.akamaihd.net
+  - +.blzddist3-a.akamaihd.net
