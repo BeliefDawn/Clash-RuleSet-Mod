@@ -44,6 +44,42 @@ payload:
   - adx-strategy-api-cn.statisticslinks.com
   - da.statisticslinks.com
 
+  # --- Google 广告与追踪 ---
+  - doubleclick.net
+  - doubleclick.com
+  - doubleclick-cn.net
+  - doubleclick.cn
+  - 2mdn.net
+  - 2mdn-cn.net
+  - google-analytics.com
+  - google-analytics-cn.com
+  - googlesyndication.com
+  - googlesyndication-cn.com
+  - googletagmanager.com
+  - googletagmanager-cn.com
+  - googletagservices.com
+  - googletagservices-cn.com
+  - googletraveladservices.com
+  - googleadservices.com
+  - googleadservices-cn.com
+  - googleads.com
+  - googleads-cn.com
+  - googleadapis.com
+  - googleadsserving.cn
+  - admob.com
+  - admob-cn.com
+  - adsense.com
+  - adservice.google.com
+  - marketingplatform.google.com
+  - mobileads.google.com
+  - mail-ads.google.com
+  - partnerad.l.google.com
+  - pagead.l.google.com
+  - googleoptimize.com
+  - googleoptimize-cn.com
+  - urchin.com
+  - analytics.google.com
+
   # --- 其他海外/劫持类广告与追踪 ---
   - bluetrafficstream.com
   - tsyndicate.com

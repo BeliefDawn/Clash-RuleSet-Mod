@@ -1,0 +1,43 @@
+# NAME: Google-Android
+payload:
+  # FCM 推送
+  - +.mtalk.google.com
+  - +.fcm.googleapis.com
+  - +.iid.googleapis.com
+  - +.firebaseinstallations.googleapis.com
+
+  # Firebase 开发
+  - +.firebase.com
+  - +.firebaseio.com
+  - +.firebaseapp.com
+  - +.firebase.googleapis.com
+  - +.firebasedynamiclinks.googleapis.com
+  - +.firebaseinappmessaging.googleapis.com
+  - +.firebaselogging.googleapis.com
+  - +.firebaseremoteconfig.googleapis.com
+  - +.crashlytics.com
+
+  # Flutter/Dart 开发
+  - +.flutter.dev
+  - +.pub.dev
+  - +.dart.dev
+
+  # Play 商店
+  - +.play.google.com
+  - +.play.googleapis.com
+
+  # 安卓系统服务
+  - +.android.com
+  - +.android.clients.google.com
+  - +.clientservices.googleapis.com
+
+  # 账号与核心 API
+  - +.accounts.google.com
+  - +.googleapis.com
+  - +.gstatic.com
+  - +.googleusercontent.com
+  - +.1e100.net
+
+  # 开发者资源
+  - +.developers.google.com
+  - +.googlesource.com
