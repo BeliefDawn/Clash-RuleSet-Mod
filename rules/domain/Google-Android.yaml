@@ -68,4 +68,10 @@ payload:
 
   # 验证与链接
   - +.recaptcha.net
+  - +.recaptcha-cn.net
+  - +.hcaptcha.com
+  - +.api.hcaptcha.com
+  - +.imgs.hcaptcha.com
+  - +.challenges.cloudflare.com
+  - +.turnstile.cloudflare.com
   - +.page.link
