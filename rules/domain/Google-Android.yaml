@@ -30,6 +30,9 @@ payload:
   - +.android.com
   - +.android.clients.google.com
   - +.clientservices.googleapis.com
+  - +.safebrowsing.googleapis.com
+  - +.update.googleapis.com
+  - +.connectivitycheck.gstatic.com
 
   # 账号与核心 API
   - +.accounts.google.com
@@ -37,6 +40,47 @@ payload:
   - +.gstatic.com
   - +.googleusercontent.com
   - +.1e100.net
+
+  # YouTube（也是 Play Store 下载 CDN）
+  - +.youtube.com
+  - +.ytimg.com
+  - +.googlevideo.com
+  - +.ggpht.com
+  - +.gvt1.com
+  - +.gvt2.com
+
+  # Google 搜索 + Gmail + 全系服务
+  - +.google.com
+  - +.gmail.com
+  - +.googlemail.com
+
+  # 各国搜索域名
+  - +.google.com.hk
+  - +.google.co.jp
+  - +.google.co.kr
+  - +.google.co.uk
+  - +.google.de
+  - +.google.fr
+  - +.google.com.sg
+  - +.google.ca
+  - +.google.com.au
+  - +.google.co.th
+  - +.google.com.tw
+  - +.google.com.tr
+  - +.google.com.mx
+  - +.google.co.id
+  - +.google.co.in
+
+  # 开发/云服务
+  - +.appspot.com
+  - +.cloudfunctions.net
+  - +.gcr.io
+  - +.web.app
+  - +.run.app
+  - +.golang.org
+  - +.go.dev
+  - +.recaptcha.net
+  - +.page.link
 
   # 开发者资源
   - +.developers.google.com
